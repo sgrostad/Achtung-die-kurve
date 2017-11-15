@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="achtung-die-kurve"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake_modules\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="achtung-die-kurve">
+				<Option output="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/achtung-die-kurve" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Frameworks/SFML.framework"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 achtung-die-kurve"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="achtung-die-kurve/fast">
+				<Option output="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/achtung-die-kurve" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Frameworks/SFML.framework"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 achtung-die-kurve/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/sindregrostad/git/achtung-die-kurve/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/GameObject.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Line.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Line.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Player.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Player.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/ResourcePath.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Snake.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Snake.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Utility.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/Utility.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/WindowSpec.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/WindowSpec.hpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/main.cpp">
+			<Option target="achtung-die-kurve"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/sindregrostad/git/achtung-die-kurve/cmake_modules/FindSFML.cmake">
+			<Option virtualFolder="CMake Files\cmake_modules\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
