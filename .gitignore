@@ -1,0 +1,11 @@
+*
+!.ssh/
+.ssh/*
+!.ssh/config
+!.bash_profile
+!.gitignore
+!.vimrc
+!README
+!.gitconfig
+.idea/**
+cmake-build-debug/**
