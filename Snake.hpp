@@ -26,7 +26,6 @@ private:
 
     sf::Vector2f pos;
     std::vector<Line> lines;
-    sf::CircleShape tailCircle;
     sf::CircleShape headCircle;
     sf::Color color;
 
@@ -60,7 +59,6 @@ public:
 
     void updateInvisibleStatus();
 
-    void InvisibleInit();
     int setupNextInvisible();
     void startNewLine();
 

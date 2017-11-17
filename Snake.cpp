@@ -15,7 +15,6 @@ Snake::Snake() : crashed(false){
     color = sf::Color::Red;
     pos = sf::Vector2f(100,100);
     angle = 0;
-    tailCircle.setFillColor(color); tailCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); tailCircle.setRadius(NORMAL_THICKNESS); tailCircle.setPosition(pos);
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     leftKey = sf::Keyboard::Left;
     rightKey = sf::Keyboard::Right;
@@ -25,7 +24,6 @@ Snake::Snake() : crashed(false){
 }
 
 Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle) : pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false){
-    tailCircle.setFillColor(color); tailCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); tailCircle.setRadius(NORMAL_THICKNESS); tailCircle.setPosition(pos);
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     setupNextInvisible();
     startNewLine();
@@ -53,7 +51,6 @@ void Snake::update(double const& timeElapsed){
 }
 
 void Snake::draw(sf::RenderWindow &window){
-    window.draw(tailCircle);
     window.draw(headCircle);
     for(auto line : lines){
         line.draw(window);
@@ -96,7 +93,7 @@ void Snake::setCrashStatus(){
     for(auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
         if (this == *it && headPosition == (*it)->getLastPoint()){
             //Calculated number to avoid false self crash:
-            numNeckPointsToIgnore =  PI * NORMAL_SPEED_PER_FRAME / (ANGLE_PER_FRAME * POS_SAVING_DISTANCE * 4);
+            numNeckPointsToIgnore = static_cast<int>(PI * NORMAL_SPEED_PER_FRAME / (ANGLE_PER_FRAME * POS_SAVING_DISTANCE * 4) );
         }
         else{
             numNeckPointsToIgnore = 0;

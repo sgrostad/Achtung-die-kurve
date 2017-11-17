@@ -32,15 +32,6 @@ void Line::addPoint(sf::Vector2f const& point){
         vertexArray.append( sf::Vertex(-u*thickness+line[line.size()-1], color) );
     }
 }
-/*
- bool Line::crashedWithThisLine(sf::Vector2f const &headPosition, const float &headThickness, int const &numNeckPointsToIgnore){
- for(int i = line.size() - 1 - numNeckPointsToIgnore; i >= 0; i--){
- if(Distance(headPosition, line[i]) <= headThickness + thickness){
- return true;
- }
- }
- return false;
- }*/
 
 bool Line::crashedWithThisLine(sf::Vector2f const &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{
     std::vector< sf::Vector2f > tempLine = line;
@@ -57,6 +48,13 @@ void Line::clear(){
 }
 
 void Line::draw(sf::RenderWindow& window){
+    sf::CircleShape endPoints(thickness);
+    endPoints.setFillColor(color);
+    endPoints.setOrigin(thickness, thickness);
+    endPoints.setPosition(*line.begin());
+    window.draw(endPoints);
+    endPoints.setPosition(line.back());
+    window.draw(endPoints);
     window.draw(vertexArray);
 }
 
