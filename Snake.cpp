@@ -10,6 +10,7 @@
 #include <math.h>
 #include <iostream>
 #include "Utility.hpp"
+#include "WindowSpec.hpp"
 std::vector<Snake*> Snake::snakesInGame;
 Snake::Snake() : crashed(false){
     color = sf::Color::Red;
@@ -89,6 +90,10 @@ bool Snake::DistanceEnoughToUpdate(){
 
 void Snake::setCrashStatus(){
     sf::Vector2f headPosition = this->getLastPoint();
+    if (this->checkForWallCrash(headPosition, this->getCurrentThickness())){
+        crashed = true;
+        this->addPoint();
+    }
     int numNeckPointsToIgnore;
     for(auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
         if (this == *it && headPosition == (*it)->getLastPoint()){
@@ -98,7 +103,7 @@ void Snake::setCrashStatus(){
         else{
             numNeckPointsToIgnore = 0;
         }
-        if ((*it)->checkForCrash(headPosition, lines.back().getThickness()/*Make member variable in snake*/, numNeckPointsToIgnore)){
+        if ((*it)->checkForSnakeCrash(headPosition, this->getCurrentThickness(), numNeckPointsToIgnore)){
             crashed = true;
             this->addPoint();
             return;
@@ -106,11 +111,22 @@ void Snake::setCrashStatus(){
     }
 }
 
-bool Snake::checkForCrash(const sf::Vector2f &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{ //Called from another snake
+bool Snake::checkForSnakeCrash(const sf::Vector2f &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{ //Called from another snake
+//TODO This fails if snakes crashes with the start of the second tail
     for(auto it = lines.begin(); it != lines.end(); it++){
         if(it->crashedWithThisLine(headPosition, headThickness, numNeckPointsToIgnore)){
             return true;
         }
+    }
+    return false;
+}
+
+bool Snake::checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const {
+    int boardWidth = WindowSpec::windowWidth;
+    int boardHeight = WindowSpec::windowHeight;
+    if(headPosition.x - headThickness < 0 || headPosition.x + headThickness > boardWidth ||
+       headPosition.y - headThickness < 0 || headPosition.y + headThickness > boardHeight){
+        return true;
     }
     return false;
 }

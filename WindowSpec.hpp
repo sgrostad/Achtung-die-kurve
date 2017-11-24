@@ -19,6 +19,8 @@ private:
     sf::VideoMode videoMode;
     string windowName;
 public:
+    int static windowWidth;
+    int static windowHeight;
     WindowSpec();
     sf::VideoMode getVideoMode(){return videoMode;}
     string getWindowName(){return windowName;}

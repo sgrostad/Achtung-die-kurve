@@ -18,6 +18,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <list>
+#include "LevelUp.hpp"
 // Here is a small helper for you ! Have a look.
 #include "ResourcePath.hpp"
 #include "WindowSpec.hpp"
@@ -29,7 +30,6 @@ int main(int, char const**)
     WindowSpec windowSpec;
     sf::RenderWindow window(windowSpec.getVideoMode(),windowSpec.getWindowName(),sf::Style::Fullscreen);
     std::list<GameObject*> gameobjects;
-    //gameobjects.push_back();
     gameobjects.push_back(new Player(sf::Vector2f(100,100), sf::Color::Red, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right, 0));
     gameobjects.push_back(new Player(sf::Vector2f(100,400), sf::Color::Blue, sf::Keyboard::Key::A, sf::Keyboard::Key::D, 0));
     sf::Clock clock;
@@ -45,6 +45,7 @@ int main(int, char const**)
         time = clock.getElapsedTime();
         double timeNow = time.asMicroseconds();
         delta += (timeNow - lastTime) / MICRO_SECONDS_PER_PHOTO;
+        //TODO Find out what unit timeElapsed is and make it more readable and understandable
         double timeElapsed = (timeNow - lastTime) / MICRO_SECONDS_PER_PHOTO;
         lastTime = timeNow;
         for(auto gameobject : gameobjects){
@@ -64,6 +65,8 @@ int main(int, char const**)
                     case sf::Keyboard::Escape:
                         window.close();
                         break;
+                    case sf::Keyboard::I:
+                        gameobjects.push_back(new LevelUp());
                     default:
                         break;
                 }

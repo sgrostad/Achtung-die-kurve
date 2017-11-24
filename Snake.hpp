@@ -55,7 +55,8 @@ public:
     bool DistanceEnoughToUpdate();
 
     void setCrashStatus();
-    bool checkForCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore)const;
+    bool checkForSnakeCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore)const;
+    bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const;
 
     void updateInvisibleStatus();
 
@@ -63,6 +64,7 @@ public:
     void startNewLine();
 
     sf::Vector2f getLastPoint(){return lines.back().getLastPointOnLine();}
+    float getCurrentThickness(){return headCircle.getRadius();}
     sf::Keyboard::Key getRightKey(){return rightKey;}
     sf::Keyboard::Key getLeftKey(){return leftKey;}
 };

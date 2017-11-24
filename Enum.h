@@ -8,8 +8,9 @@
 
 #ifndef Enum_h
 #define Enum_h
-enum Direction {RIGHT, LEFT};
-enum PlayerNumber {PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4};
+enum Direction{RIGHT, LEFT};
+enum PlayerNumber{PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4};
+enum LevelUpType{SPEED_FAST, SPEED_SLOW, CLEAR_BOARD, FAT, THIN, SWITCH_CONTROLS, OPEN_WALLS};
 
 const float FPS = 60.0;
 const double PI = 3.14159265;
