@@ -33,6 +33,8 @@ private:
     sf::Keyboard::Key leftKey;
     sf::Keyboard::Key rightKey;
 
+    std::vector<LevelUpType*> levelUps;
+
     sf::Clock invisibleTimer;
     bool invisible;
     int numFramesInvisible;
@@ -58,8 +60,9 @@ public:
     bool checkForSnakeCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore)const;
     bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const;
 
-    void updateInvisibleStatus();
 
+
+    void updateInvisibleStatus();
     int setupNextInvisible();
     void startNewLine();
 

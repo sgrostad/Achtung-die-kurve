@@ -5,8 +5,8 @@
 //  Copyright © 2017 Sindre Grøstad. All rights reserved.
 //
 
-#ifndef GameObject_h
-#define GameObject_h
+#ifndef GameObject_hpp
+#define GameObject_hpp
 #include <SFML/Graphics.hpp>
 #include "Enum.h"
 class GameObject{

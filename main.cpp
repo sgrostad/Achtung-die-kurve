@@ -23,15 +23,14 @@
 #include "ResourcePath.hpp"
 #include "WindowSpec.hpp"
 #include "Player.hpp"
+#include "Game.hpp"
 
 int main(int, char const**)
 {
     srand(time(nullptr));
     WindowSpec windowSpec;
     sf::RenderWindow window(windowSpec.getVideoMode(),windowSpec.getWindowName(),sf::Style::Fullscreen);
-    std::list<GameObject*> gameobjects;
-    gameobjects.push_back(new Player(sf::Vector2f(100,100), sf::Color::Red, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right, 0));
-    gameobjects.push_back(new Player(sf::Vector2f(100,400), sf::Color::Blue, sf::Keyboard::Key::A, sf::Keyboard::Key::D, 0));
+    Game game;
     sf::Clock clock;
     sf::Time time = clock.getElapsedTime();
     double lastTime = time.asMicroseconds();//System.nanoTime();
@@ -48,9 +47,7 @@ int main(int, char const**)
         //TODO Find out what unit timeElapsed is and make it more readable and understandable
         double timeElapsed = (timeNow - lastTime) / MICRO_SECONDS_PER_PHOTO;
         lastTime = timeNow;
-        for(auto gameobject : gameobjects){
-            gameobject->update(timeElapsed);
-        }
+        game.update(timeElapsed);
         updates++;
         // Process events
         sf::Event event;
@@ -66,7 +63,7 @@ int main(int, char const**)
                         window.close();
                         break;
                     case sf::Keyboard::I:
-                        gameobjects.push_back(new LevelUp());
+                        game.addLevelUp();
                     default:
                         break;
                 }
@@ -75,9 +72,7 @@ int main(int, char const**)
         if (delta >= 1.0) {
             // Clear screen
             window.clear();
-            for(auto gameobject : gameobjects){
-                gameobject->draw(window);
-            }
+            game.draw(window);
             // Update the window
             window.display();
             frames++;
