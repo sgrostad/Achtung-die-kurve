@@ -22,12 +22,15 @@ private:
 public:
     Line();
     Line(double const& _thickness, sf::Color const& _color);
+
     void addPoint(sf::Vector2f const& point);
+
     bool crashedWithThisLine(sf::Vector2f const &headPosition, const float &headThickness, int const &numNeckPointsToIgnore)const;
-    sf::Vector2f getLastPointOnLine(){return line.back();}
+
+    sf::Vector2f getLastPointOnLine() const {return line.back();}
     int getSize() const {return line.size();}
-    void setThickness(double _thickness){thickness = _thickness;}
-    float getThickness(){return thickness;}
+    void setThickness(double const _thickness){thickness = _thickness;}
+    float getThickness() const {return thickness;}
     void clear();
     void draw(sf::RenderWindow& window);
 };

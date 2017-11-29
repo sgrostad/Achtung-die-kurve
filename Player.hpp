@@ -11,18 +11,23 @@
 
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
-#include "GameObject.hpp"
 #include "Snake.hpp"
 #include "Enum.h"
-class Player : public GameObject{
+class Player {
 private:
     sf::Color playerColor;
     Snake snake;
 public:
     Player(sf::Color playerColor);
     Player(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle);
+
     void update(double timeElapsed);
     void draw(sf::RenderWindow &window);
+
+    void addLevelUp(LevelUp const &levelUp){ snake.addLevelUp(levelUp);}
+
+    sf::Vector2f getPosition(){ return snake.getLastPoint();}
+    float getCurrentThickness(){ return snake.getCurrentThickness();}
 };
 #endif /* Player_hpp */
 

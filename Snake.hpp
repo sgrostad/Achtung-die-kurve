@@ -16,13 +16,15 @@
 #include <list>
 #include "Enum.h"
 #include "Line.hpp"
+#include "LevelUp.hpp"
+
 const int POS_SAVING_DISTANCE = 2;
 const double ANGLE_PER_FRAME = 2*PI/FPS;
-const int NORMAL_SPEED_PER_FRAME = 5;
+const double NORMAL_SPEED_PER_FRAME = 5.0;
 
 class Snake{
 private:
-    static std::vector<Snake*> snakesInGame;
+    static std::list<Snake*> snakesInGame;
 
     sf::Vector2f pos;
     std::vector<Line> lines;
@@ -33,7 +35,9 @@ private:
     sf::Keyboard::Key leftKey;
     sf::Keyboard::Key rightKey;
 
-    std::vector<LevelUpType*> levelUps;
+    double speed;
+
+    std::list<const LevelUp*> levelUps;
 
     sf::Clock invisibleTimer;
     bool invisible;
@@ -47,20 +51,23 @@ public:
     ~Snake();
 
     void update(double const& timeElapsed);
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window) const;
 
     void turn(double timeElapsed);
 
     void updatePosition(double const& timeElapsed);
     void checkWhetherAddingPoint();
     void addPoint();
-    bool DistanceEnoughToUpdate();
+    bool DistanceEnoughToUpdate() const;
 
     void setCrashStatus();
-    bool checkForSnakeCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore)const;
-    bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const;
+    bool checkForSnakeCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore) const;
+    bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness) const;
 
-
+    void addLevelUp(LevelUp const &levelUp);
+    void startLevelUp(LevelUpType const &levelUpType);
+    void removeLevelUps();
+    void stopLevelUp(LevelUpType const &levelUpType);
 
     void updateInvisibleStatus();
     int setupNextInvisible();

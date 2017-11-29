@@ -3,7 +3,7 @@ project(achtung-die-kurve)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp Player.cpp Utility.cpp Utility.hpp Player.cpp Player.hpp GameObject.hpp Snake.cpp Snake.hpp Line.cpp Line.hpp WindowSpec.cpp WindowSpec.hpp ResourcePath.hpp LevelUp.cpp LevelUp.hpp Game.cpp Game.hpp)
+set(SOURCE_FILES main.cpp Player.cpp Utility.cpp Utility.hpp Player.cpp Player.hpp Snake.cpp Snake.hpp Line.cpp Line.hpp WindowSpec.cpp WindowSpec.hpp ResourcePath.hpp LevelUp.cpp LevelUp.hpp Game.cpp Game.hpp)
 add_executable(achtung-die-kurve ${SOURCE_FILES})
 
 set(/usr/local/Cellar/sfml/)

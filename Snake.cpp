@@ -11,11 +11,12 @@
 #include <iostream>
 #include "Utility.hpp"
 #include "WindowSpec.hpp"
-std::vector<Snake*> Snake::snakesInGame;
+std::list<Snake*> Snake::snakesInGame;
 Snake::Snake() : crashed(false){
     color = sf::Color::Red;
     pos = sf::Vector2f(100,100);
     angle = 0;
+    speed = NORMAL_SPEED_PER_FRAME;
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     leftKey = sf::Keyboard::Left;
     rightKey = sf::Keyboard::Right;
@@ -24,7 +25,8 @@ Snake::Snake() : crashed(false){
     snakesInGame.push_back(this);
 }
 
-Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle) : pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false){
+Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle) :
+        pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME){
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     setupNextInvisible();
     startNewLine();
@@ -41,17 +43,18 @@ Snake::~Snake(){
 
 void Snake::update(double const& timeElapsed){
     if (!crashed){
-        turn(timeElapsed);
-        updatePosition(timeElapsed);
-        updateInvisibleStatus();
+        this->turn(timeElapsed);
+        this->updatePosition(timeElapsed);
+        this->updateInvisibleStatus();
+        this->removeLevelUps();
         if (!invisible){
-            checkWhetherAddingPoint();
-            setCrashStatus();
+            this->checkWhetherAddingPoint();
+            this->setCrashStatus();
         }
     }
 }
 
-void Snake::draw(sf::RenderWindow &window){
+void Snake::draw(sf::RenderWindow &window) const {
     window.draw(headCircle);
     for(auto line : lines){
         line.draw(window);
@@ -68,8 +71,8 @@ void Snake::turn(double timeElapsed){
 }
 
 void Snake::updatePosition(double const& timeElapsed){
-    pos.x += NORMAL_SPEED_PER_FRAME * cos(angle) * timeElapsed;
-    pos.y -= NORMAL_SPEED_PER_FRAME * sin(angle) * timeElapsed;
+    pos.x += speed * cos(angle) * timeElapsed;
+    pos.y -= speed * sin(angle) * timeElapsed;
     headCircle.setPosition(pos);
 }
 
@@ -84,7 +87,7 @@ void Snake::addPoint(){
     headCircle.setPosition(pos);
 }
 
-bool Snake::DistanceEnoughToUpdate(){
+bool Snake::DistanceEnoughToUpdate() const {
     return Distance(pos, lines.back().getLastPointOnLine()) > POS_SAVING_DISTANCE;
 }
 
@@ -131,6 +134,62 @@ bool Snake::checkForWallCrash(sf::Vector2f const &headPosition, float const &hea
     return false;
 }
 
+void Snake::addLevelUp(LevelUp const &levelUp) {
+    if(levelUp.isEnemiesLevelUp()){ //TODO check if it everything works when enemies get level up
+        for(auto it = this->snakesInGame.begin(); it != this->snakesInGame.end(); it++){
+            if( (*it) != this ){
+                (*it)->levelUps.push_back(&levelUp);
+                (*it)->startLevelUp(levelUp.getLevelUpType());
+            }
+        }
+    }
+    else {
+        levelUps.push_back(&levelUp);
+        this->startLevelUp(levelUp.getLevelUpType());
+    }
+}
+
+void Snake::startLevelUp(LevelUpType const &levelUpType) { //TODO add all cases
+    switch(levelUpType){
+        case SPEED_FAST:
+            speed = speed * 1.5;
+            break;
+        case SPEED_SLOW:
+            speed = speed / 1.5;
+            break;
+        case FAT:
+            break;
+        default:
+            std::cout<<"Should not end up here when starting LevelUp "<< levelUpType << std::endl;
+            exit(1);
+    }
+}
+
+void Snake::removeLevelUps() {
+    for(auto it = levelUps.begin(); it != levelUps.end(); it++){
+        if((*it)->timeToDeactivate()){
+            stopLevelUp((*it)->getLevelUpType());
+            levelUps.erase(it);
+        }
+    }
+}
+
+void Snake::stopLevelUp(LevelUpType const &levelUpType) { //TODO add all cases
+    switch(levelUpType){
+        case SPEED_FAST:
+            speed = speed / 1.5;
+            break;
+        case SPEED_SLOW:
+            speed = speed * 1.5;
+            break;
+        case FAT:
+            break;
+        default:
+            std::cout<<"Should not end up here when stopping LevelUp"<<std::endl;
+            exit(1);
+    }
+}
+
 void Snake::updateInvisibleStatus(){
     sf::Time time = invisibleTimer.getElapsedTime();
     int FramesSinceRestart = time.asSeconds() * FPS;
@@ -145,7 +204,6 @@ void Snake::updateInvisibleStatus(){
         startNewLine();
     }
 }
-
 
 int Snake::setupNextInvisible(){
     invisibleTimer.restart();
