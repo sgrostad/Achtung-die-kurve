@@ -10,7 +10,7 @@
 #include <math.h>
 #include <iostream>
 
-#include "Enum.h"
+#include "Enum.hpp"
 
 double Norm2(sf::Vector2f const& vec){
     return sqrt( pow(vec.x,2) + pow(vec.y, 2) );

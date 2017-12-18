@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include "Snake.hpp"
-#include "Enum.h"
+#include "Enum.hpp"
 class Player {
 private:
     sf::Color playerColor;

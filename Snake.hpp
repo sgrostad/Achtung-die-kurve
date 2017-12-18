@@ -14,13 +14,15 @@
 #include <utility>
 #include <vector>
 #include <list>
-#include "Enum.h"
+#include "Enum.hpp"
 #include "Line.hpp"
 #include "LevelUp.hpp"
 
 const int POS_SAVING_DISTANCE = 2;
 const double ANGLE_PER_FRAME = 2*PI/FPS;
 const double NORMAL_SPEED_PER_FRAME = 5.0;
+const double SPEED_LEVEL_UP_INCREMENT = 2;
+const double WIDTH_LEVEL_UP_INCREMENT = 4;
 
 class Snake{
 private:
@@ -65,16 +67,17 @@ public:
     bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness) const;
 
     void addLevelUp(LevelUp const &levelUp);
-    void startLevelUp(LevelUpType const &levelUpType);
+    void startLevelUp(LevelUpType levelUpType);
     void removeLevelUps();
-    void stopLevelUp(LevelUpType const &levelUpType);
+    void stopLevelUp(LevelUpType levelUpType);
 
     void updateInvisibleStatus();
-    int setupNextInvisible();
-    void startNewLine();
+    void setupNextInvisible();
+    void startNewLine(double thickness);
 
     sf::Vector2f getLastPoint(){return lines.back().getLastPointOnLine();}
     float getCurrentThickness(){return headCircle.getRadius();}
+    void setCurrentThickness(float thickness);
     sf::Keyboard::Key getRightKey(){return rightKey;}
     sf::Keyboard::Key getLeftKey(){return leftKey;}
 };

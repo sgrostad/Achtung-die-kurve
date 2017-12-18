@@ -21,7 +21,7 @@ Snake::Snake() : crashed(false){
     leftKey = sf::Keyboard::Left;
     rightKey = sf::Keyboard::Right;
     setupNextInvisible();
-    startNewLine();
+    startNewLine(NORMAL_THICKNESS);
     snakesInGame.push_back(this);
 }
 
@@ -29,7 +29,7 @@ Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey
         pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME){
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     setupNextInvisible();
-    startNewLine();
+    startNewLine(NORMAL_THICKNESS);
     snakesInGame.push_back(this);
 }
 
@@ -116,6 +116,7 @@ void Snake::setCrashStatus(){
 
 bool Snake::checkForSnakeCrash(const sf::Vector2f &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{ //Called from another snake
 //TODO This fails if snakes crashes with the start of the second tail
+    //TODO make one working for really fat snake. need to adjust numNekPointsToIgnore based on how fat we are.
     for(auto it = lines.begin(); it != lines.end(); it++){
         if(it->crashedWithThisLine(headPosition, headThickness, numNeckPointsToIgnore)){
             return true;
@@ -149,44 +150,76 @@ void Snake::addLevelUp(LevelUp const &levelUp) {
     }
 }
 
-void Snake::startLevelUp(LevelUpType const &levelUpType) { //TODO add all cases
+void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
+    std::cout<<"StartLevelUp is called on "<< levelUpType <<std::endl;
     switch(levelUpType){
         case SPEED_FAST:
-            speed = speed * 1.5;
+            speed = speed * SPEED_LEVEL_UP_INCREMENT;
             break;
         case SPEED_SLOW:
-            speed = speed / 1.5;
+            speed = speed / SPEED_LEVEL_UP_INCREMENT;
             break;
         case FAT:
+            this->setCurrentThickness(this->getCurrentThickness() * WIDTH_LEVEL_UP_INCREMENT);
+            break;
+        case THIN:
+            this->setCurrentThickness(this->getCurrentThickness() / WIDTH_LEVEL_UP_INCREMENT);
+            break;
+        case REVERSE_CONTROLS:
+            std::cout << "REVERSE CONTROLS" << std::endl;
+            break;
+        case OPEN_WALLS:
+            std::cout << "OPEN WALLS" << std::endl;
+            break;
+        case INVISIBLE:
+            std::cout << "INVISIBLE" << std::endl;
             break;
         default:
             std::cout<<"Should not end up here when starting LevelUp "<< levelUpType << std::endl;
-            exit(1);
+            //exit(1);
     }
 }
 
 void Snake::removeLevelUps() {
-    for(auto it = levelUps.begin(); it != levelUps.end(); it++){
+    for(auto it = levelUps.begin(); it != levelUps.end();){
+        std::cout<< (*it)->getLevelUpType()<<" ";
         if((*it)->timeToDeactivate()){
             stopLevelUp((*it)->getLevelUpType());
-            levelUps.erase(it);
+            it = levelUps.erase(it);
+        } else{
+            it++;
         }
     }
+    std::cout<<std::endl;
 }
 
-void Snake::stopLevelUp(LevelUpType const &levelUpType) { //TODO add all cases
+void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
+    std::cout<<"StopLevelUp is called on "<< levelUpType << std::endl;
     switch(levelUpType){
         case SPEED_FAST:
-            speed = speed / 1.5;
+            speed = speed / SPEED_LEVEL_UP_INCREMENT;
             break;
         case SPEED_SLOW:
-            speed = speed * 1.5;
+            speed = speed * SPEED_LEVEL_UP_INCREMENT;
             break;
         case FAT:
+            this->setCurrentThickness(this->getCurrentThickness() / WIDTH_LEVEL_UP_INCREMENT);
+            break;
+        case THIN:
+            this->setCurrentThickness(this->getCurrentThickness() * WIDTH_LEVEL_UP_INCREMENT);
+            break;
+        case REVERSE_CONTROLS:
+            std::cout << "REVERSE CONTROLS" << std::endl;
+            break;
+        case OPEN_WALLS:
+            std::cout << "OPEN WALLS" << std::endl;
+            break;
+        case INVISIBLE:
+            std::cout << "INVISIBLE" << std::endl;
             break;
         default:
             std::cout<<"Should not end up here when stopping LevelUp"<<std::endl;
-            exit(1);
+            //exit(1);
     }
 }
 
@@ -201,11 +234,11 @@ void Snake::updateInvisibleStatus(){
     }
     else{ //Not invisible more
         setupNextInvisible();
-        startNewLine();
+        startNewLine(this->getCurrentThickness());
     }
 }
 
-int Snake::setupNextInvisible(){
+void Snake::setupNextInvisible(){
     invisibleTimer.restart();
     invisible = false;
     int minNumFramesInvisible = 4;
@@ -220,8 +253,14 @@ int Snake::setupNextInvisible(){
     framesToNextInvisible = RandomInt(minFramesToInvisible, maxFramesToInvisible);
 }
 
-void Snake::startNewLine(){
-    lines.push_back(Line(NORMAL_THICKNESS,color));
+void Snake::startNewLine(double thickness){
+    lines.push_back(Line(thickness,color));
     lines.back().addPoint(pos);
+}
+
+void Snake::setCurrentThickness(float thickness) {
+    this->startNewLine(thickness);
+    headCircle.setRadius(thickness);
+    headCircle.setOrigin(thickness,thickness);
 }
 
