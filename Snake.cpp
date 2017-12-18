@@ -151,7 +151,7 @@ void Snake::addLevelUp(LevelUp const &levelUp) {
 }
 
 void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
-    std::cout<<"StartLevelUp is called on "<< levelUpType <<std::endl;
+    sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
             speed = speed * SPEED_LEVEL_UP_INCREMENT;
@@ -166,7 +166,9 @@ void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->setCurrentThickness(this->getCurrentThickness() / WIDTH_LEVEL_UP_INCREMENT);
             break;
         case REVERSE_CONTROLS:
-            std::cout << "REVERSE CONTROLS" << std::endl;
+            tempKey = this->rightKey;
+            this->rightKey = this->leftKey;
+            this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
             std::cout << "OPEN WALLS" << std::endl;
@@ -190,11 +192,10 @@ void Snake::removeLevelUps() {
             it++;
         }
     }
-    std::cout<<std::endl;
 }
 
 void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
-    std::cout<<"StopLevelUp is called on "<< levelUpType << std::endl;
+    sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
             speed = speed / SPEED_LEVEL_UP_INCREMENT;
@@ -209,7 +210,9 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->setCurrentThickness(this->getCurrentThickness() * WIDTH_LEVEL_UP_INCREMENT);
             break;
         case REVERSE_CONTROLS:
-            std::cout << "REVERSE CONTROLS" << std::endl;
+            tempKey = this->rightKey;
+            this->rightKey = this->leftKey;
+            this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
             std::cout << "OPEN WALLS" << std::endl;
