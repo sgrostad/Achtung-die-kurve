@@ -12,7 +12,7 @@
 #include "Utility.hpp"
 #include "WindowSpec.hpp"
 std::list<Snake*> Snake::snakesInGame;
-Snake::Snake() : crashed(false){
+Snake::Snake() : crashed(false), openWalls(false){
     color = sf::Color::Red;
     pos = sf::Vector2f(100,100);
     angle = 0;
@@ -26,7 +26,8 @@ Snake::Snake() : crashed(false){
 }
 
 Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle) :
-        pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME){
+        pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME),
+        openWalls(true) {
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     setupNextInvisible();
     startNewLine(NORMAL_THICKNESS);
@@ -42,6 +43,7 @@ Snake::~Snake(){
 }
 
 void Snake::update(double const& timeElapsed){
+    std::cout<< "x: " << pos.x << ", y: "<<pos.y<<std::endl;
     if (!crashed){
         this->turn(timeElapsed);
         this->updatePosition(timeElapsed);
@@ -93,7 +95,7 @@ bool Snake::DistanceEnoughToUpdate() const {
 
 void Snake::setCrashStatus(){
     sf::Vector2f headPosition = this->getLastPoint();
-    if (this->checkForWallCrash(headPosition, this->getCurrentThickness())){
+    if (this->checkForWallCrash()){
         crashed = true;
         this->addPoint();
     }
@@ -125,14 +127,44 @@ bool Snake::checkForSnakeCrash(const sf::Vector2f &headPosition, const float &he
     return false;
 }
 
-bool Snake::checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const {
+bool Snake::checkForWallCrash(){
     int boardWidth = WindowSpec::windowWidth;
     int boardHeight = WindowSpec::windowHeight;
-    if(headPosition.x - headThickness < 0 || headPosition.x + headThickness > boardWidth ||
-       headPosition.y - headThickness < 0 || headPosition.y + headThickness > boardHeight){
-        return true;
+    float headThickness = this->getCurrentThickness();
+    if(pos.x - headThickness < 0 || pos.x + headThickness > boardWidth ||
+       pos.y - headThickness < 0 || pos.y + headThickness > boardHeight){
+        if(!openWalls){
+            return true;
+        } else {
+            this->goThroughWall();
+        }
     }
     return false;
+
+}
+
+void Snake::goThroughWall() {
+    int boardWidth = WindowSpec::windowWidth;
+    int boardHeight = WindowSpec::windowHeight;
+    float headThickness = this->getCurrentThickness();
+    bool positionChanged = false;
+    if (pos.x < 0){
+        pos.x += boardWidth;
+        positionChanged = true;
+    } else if (pos.x > boardWidth){
+        pos.x -= boardWidth;
+        positionChanged = true;
+    }
+    if (pos.y < 0){
+        pos.y += boardHeight;
+        positionChanged = true;
+    } else if (pos.y > boardHeight) {
+        pos.y -= boardHeight;
+        positionChanged = true;
+    }
+    if (positionChanged){
+        this->startNewLine(headThickness);
+    }
 }
 
 void Snake::addLevelUp(LevelUp const &levelUp) {
@@ -171,7 +203,7 @@ void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
-            std::cout << "OPEN WALLS" << std::endl;
+            this->openWalls = true;
             break;
         case INVISIBLE:
             std::cout << "INVISIBLE" << std::endl;
@@ -184,7 +216,6 @@ void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
 
 void Snake::removeLevelUps() {
     for(auto it = levelUps.begin(); it != levelUps.end();){
-        std::cout<< (*it)->getLevelUpType()<<" ";
         if((*it)->timeToDeactivate()){
             stopLevelUp((*it)->getLevelUpType());
             it = levelUps.erase(it);
@@ -215,7 +246,7 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
-            std::cout << "OPEN WALLS" << std::endl;
+            this->openWalls = false;
             break;
         case INVISIBLE:
             std::cout << "INVISIBLE" << std::endl;

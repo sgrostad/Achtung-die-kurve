@@ -40,6 +40,7 @@ private:
     double speed;
 
     std::list<const LevelUp*> levelUps;
+    bool openWalls;
 
     sf::Clock invisibleTimer;
     bool invisible;
@@ -64,7 +65,8 @@ public:
 
     void setCrashStatus();
     bool checkForSnakeCrash(sf::Vector2f const &headPosition, float const &headThickness, int const &numNeckPointsToIgnore) const;
-    bool checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness) const;
+    bool checkForWallCrash();
+    void goThroughWall();
 
     void addLevelUp(LevelUp const &levelUp);
     void startLevelUp(LevelUpType levelUpType);
