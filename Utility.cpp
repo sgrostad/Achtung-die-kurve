@@ -9,6 +9,7 @@
 #include "Utility.hpp"
 #include <math.h>
 #include <iostream>
+#include <list>
 
 #include "Enum.hpp"
 
@@ -37,7 +38,7 @@ double Average(double val1, double val2){
     return (val1 + val2) / 2;
 }
 
-bool CircleCrashedWithLine(sf::Vector2f const &position, int const &circleRadius, std::vector< sf::Vector2f > const &line, int const &lineThickness){
+bool CircleCrashedWithLine(sf::Vector2f const &position, float const &circleRadius, std::list< sf::Vector2f > const &line, int const &lineThickness){
     for(auto it = line.begin(); it != line.end(); it++){
         if(Distance(position, *it) <= circleRadius + lineThickness){
             return true;
@@ -46,3 +47,9 @@ bool CircleCrashedWithLine(sf::Vector2f const &position, int const &circleRadius
     return false;
 }
 
+float Max(float const &val1, float const &val2){
+    if (val1 > val2){
+        return val1;
+    }
+    return val2;
+}
