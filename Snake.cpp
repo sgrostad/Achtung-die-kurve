@@ -99,6 +99,7 @@ void Snake::setCrashStatus(){
     if (this->checkForWallCrash()){
         this->setCrashed(true);
         this->addPoint();
+        return;
     }
     for(auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
         if (this == *it){
