@@ -73,6 +73,7 @@ public:
     bool startLevelUp(LevelUpType levelUpType);
     void removeLevelUps();
     void stopLevelUp(LevelUpType levelUpType);
+    void clearBoard();
 
     void updateInvisibleStatus();
     void setupNextInvisible();

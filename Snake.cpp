@@ -43,7 +43,6 @@ Snake::~Snake(){
 }
 
 void Snake::update(double const& timeElapsed){
-    //std::cout<< "x: " << pos.x << ", y: "<<pos.y<<std::endl;
     if (!crashed){
         this->turn(timeElapsed);
         this->updatePosition(timeElapsed);
@@ -210,6 +209,9 @@ bool Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
                 return false;
             }
             break;
+        case CLEAR_BOARD:
+            this->clearBoard();
+            return false;
         case FAT:
             return this->setCurrentThickness(this->getCurrentThickness() + WIDTH_LEVEL_UP_INCREMENT);
         case THIN:
@@ -227,7 +229,7 @@ bool Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
             break;
         default:
             std::cout<<"Should not end up here when starting LevelUp "<< levelUpType << std::endl;
-            //exit(1);
+            exit(1);
     }
     return true;
 }
@@ -272,6 +274,15 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
         default:
             std::cout<<"Should not end up here when stopping LevelUp"<<std::endl;
             //exit(1);
+    }
+}
+
+void Snake::clearBoard() {
+    for (auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
+        (*it)->lines.clear();
+        if(!(*it)->crashed){
+            (*it)->startNewLine((*it)->getCurrentThickness());
+        }
     }
 }
 
