@@ -12,7 +12,7 @@
 #include "Utility.hpp"
 #include "WindowSpec.hpp"
 std::list<Snake*> Snake::snakesInGame;
-Snake::Snake() : crashed(false){
+Snake::Snake() : crashed(false), openWalls(false){
     color = sf::Color::Red;
     pos = sf::Vector2f(100,100);
     angle = 0;
@@ -26,7 +26,8 @@ Snake::Snake() : crashed(false){
 }
 
 Snake::Snake(sf::Vector2f startPos, sf::Color _color, sf::Keyboard::Key _leftKey, sf::Keyboard::Key _rightKey, double _angle) :
-        pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME){
+        pos(startPos), color(_color), leftKey(_leftKey), rightKey(_rightKey), angle(_angle), crashed(false), speed(NORMAL_SPEED_PER_FRAME),
+        openWalls(false) {
     headCircle.setOrigin(NORMAL_THICKNESS,NORMAL_THICKNESS); headCircle.setRadius(NORMAL_THICKNESS); headCircle.setPosition(pos); headCircle.setFillColor(color);
     setupNextInvisible();
     startNewLine(NORMAL_THICKNESS);
@@ -55,7 +56,9 @@ void Snake::update(double const& timeElapsed){
 }
 
 void Snake::draw(sf::RenderWindow &window) const {
-    window.draw(headCircle);
+    if (!crashed) {
+        window.draw(headCircle);
+    }
     for(auto line : lines){
         line.draw(window);
     }
@@ -83,108 +86,156 @@ void Snake::checkWhetherAddingPoint(){
 }
 
 void Snake::addPoint(){
-    lines.back().addPoint(pos);
+    lines.front().addPoint(pos);
     headCircle.setPosition(pos);
 }
 
 bool Snake::DistanceEnoughToUpdate() const {
-    return Distance(pos, lines.back().getLastPointOnLine()) > POS_SAVING_DISTANCE;
+    return Distance(pos, lines.front().getLastPointOnLine()) > POS_SAVING_DISTANCE;
 }
 
 void Snake::setCrashStatus(){
     sf::Vector2f headPosition = this->getLastPoint();
-    if (this->checkForWallCrash(headPosition, this->getCurrentThickness())){
-        crashed = true;
+    if (this->checkForWallCrash()){
+        this->setCrashed(true);
         this->addPoint();
     }
-    int numNeckPointsToIgnore;
     for(auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
-        if (this == *it && headPosition == (*it)->getLastPoint()){
-            //Calculated number to avoid false self crash:
-            numNeckPointsToIgnore = static_cast<int>(PI * NORMAL_SPEED_PER_FRAME / (ANGLE_PER_FRAME * POS_SAVING_DISTANCE * 4) );
+        if (this == *it){
+            this->setCrashed( (*it)->checkForSelfCrash(headPosition, this->getCurrentThickness()) );
+        } else {
+            this->setCrashed( (*it)->checkForEnemyCrash(headPosition, this->getCurrentThickness()) );
         }
-        else{
-            numNeckPointsToIgnore = 0;
-        }
-        if ((*it)->checkForSnakeCrash(headPosition, this->getCurrentThickness(), numNeckPointsToIgnore)){
-            crashed = true;
+        if (crashed){
             this->addPoint();
             return;
         }
     }
 }
 
-bool Snake::checkForSnakeCrash(const sf::Vector2f &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{ //Called from another snake
-//TODO This fails if snakes crashes with the start of the second tail
-    //TODO make one working for really fat snake. need to adjust numNekPointsToIgnore based on how fat we are.
+bool Snake::checkForEnemyCrash(sf::Vector2f const &headPosition, float const &headThickness) const {//Called from another snake
     for(auto it = lines.begin(); it != lines.end(); it++){
-        if(it->crashedWithThisLine(headPosition, headThickness, numNeckPointsToIgnore)){
+        if(it->crashedWithThisLine(headPosition, headThickness, false)){
             return true;
         }
     }
     return false;
 }
 
-bool Snake::checkForWallCrash(sf::Vector2f const &headPosition, float const &headThickness)const {
-    int boardWidth = WindowSpec::windowWidth;
-    int boardHeight = WindowSpec::windowHeight;
-    if(headPosition.x - headThickness < 0 || headPosition.x + headThickness > boardWidth ||
-       headPosition.y - headThickness < 0 || headPosition.y + headThickness > boardHeight){
-        return true;
+bool Snake::checkForSelfCrash(const sf::Vector2f &headPosition, const float &headThickness) const{
+    bool neckCheck = true;
+    bool first = true;
+    for(auto it = lines.begin(); it != lines.end(); it++){
+        if(it->crashedWithThisLine(headPosition, headThickness, neckCheck)){
+            return true;
+        }
+        if (first || (neckCheck && it->headContainsWholeLine(headPosition, headThickness))){
+            neckCheck = true;
+            first = false;
+        } else {
+            neckCheck = false;
+        }
     }
     return false;
+}
+
+bool Snake::checkForWallCrash(){
+    int boardWidth = WindowSpec::windowWidth;
+    int boardHeight = WindowSpec::windowHeight;
+    float headThickness = this->getCurrentThickness();
+    if(pos.x - headThickness < 0 || pos.x + headThickness > boardWidth ||
+       pos.y - headThickness < 0 || pos.y + headThickness > boardHeight){
+        if(!openWalls){
+            return true;
+        } else {
+            this->goThroughWall();
+        }
+    }
+    return false;
+}
+
+void Snake::goThroughWall() {
+    int boardWidth = WindowSpec::windowWidth;
+    int boardHeight = WindowSpec::windowHeight;
+    float headThickness = this->getCurrentThickness();
+    bool positionChanged = false;
+    if (pos.x < 0){
+        pos.x += boardWidth;
+        positionChanged = true;
+    } else if (pos.x > boardWidth){
+        pos.x -= boardWidth;
+        positionChanged = true;
+    }
+    if (pos.y < 0){
+        pos.y += boardHeight;
+        positionChanged = true;
+    } else if (pos.y > boardHeight) {
+        pos.y -= boardHeight;
+        positionChanged = true;
+    }
+    if (positionChanged){
+        this->startNewLine(headThickness);
+    }
 }
 
 void Snake::addLevelUp(LevelUp const &levelUp) {
     if(levelUp.isEnemiesLevelUp()){ //TODO check if it everything works when enemies get level up
         for(auto it = this->snakesInGame.begin(); it != this->snakesInGame.end(); it++){
             if( (*it) != this ){
-                (*it)->levelUps.push_back(&levelUp);
-                (*it)->startLevelUp(levelUp.getLevelUpType());
+                if ( (*it)->startLevelUp(levelUp.getLevelUpType()) ){
+                    (*it)->levelUps.push_back(&levelUp);
+                }
+
             }
         }
     }
     else {
-        levelUps.push_back(&levelUp);
-        this->startLevelUp(levelUp.getLevelUpType());
+        if (this->startLevelUp(levelUp.getLevelUpType())){
+            levelUps.push_back(&levelUp);
+        }
     }
 }
 
-void Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
+bool Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
     sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
-            speed = speed * SPEED_LEVEL_UP_INCREMENT;
+            speed = speed + SPEED_LEVEL_UP_INCREMENT;
             break;
         case SPEED_SLOW:
-            speed = speed / SPEED_LEVEL_UP_INCREMENT;
+            if ((speed - SPEED_LEVEL_UP_INCREMENT) > 0){
+                speed = speed - SPEED_LEVEL_UP_INCREMENT;
+            } else {
+                return false;
+            }
             break;
+        case CLEAR_BOARD:
+            this->clearBoard();
+            return false;
         case FAT:
-            this->setCurrentThickness(this->getCurrentThickness() * WIDTH_LEVEL_UP_INCREMENT);
-            break;
+            return this->setCurrentThickness(this->getCurrentThickness() + WIDTH_LEVEL_UP_INCREMENT);
         case THIN:
-            this->setCurrentThickness(this->getCurrentThickness() / WIDTH_LEVEL_UP_INCREMENT);
-            break;
+            return this->setCurrentThickness(this->getCurrentThickness() - WIDTH_LEVEL_UP_INCREMENT);
         case REVERSE_CONTROLS:
             tempKey = this->rightKey;
             this->rightKey = this->leftKey;
             this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
-            std::cout << "OPEN WALLS" << std::endl;
+            this->openWalls = true;
             break;
         case INVISIBLE:
             std::cout << "INVISIBLE" << std::endl;
             break;
         default:
             std::cout<<"Should not end up here when starting LevelUp "<< levelUpType << std::endl;
-            //exit(1);
+            exit(1);
     }
+    return true;
 }
 
 void Snake::removeLevelUps() {
     for(auto it = levelUps.begin(); it != levelUps.end();){
-        std::cout<< (*it)->getLevelUpType()<<" ";
         if((*it)->timeToDeactivate()){
             stopLevelUp((*it)->getLevelUpType());
             it = levelUps.erase(it);
@@ -198,16 +249,16 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
     sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
-            speed = speed / SPEED_LEVEL_UP_INCREMENT;
+            speed = speed - SPEED_LEVEL_UP_INCREMENT;
             break;
         case SPEED_SLOW:
-            speed = speed * SPEED_LEVEL_UP_INCREMENT;
+            speed = speed + SPEED_LEVEL_UP_INCREMENT;
             break;
         case FAT:
-            this->setCurrentThickness(this->getCurrentThickness() / WIDTH_LEVEL_UP_INCREMENT);
+            this->setCurrentThickness(this->getCurrentThickness() - WIDTH_LEVEL_UP_INCREMENT);
             break;
         case THIN:
-            this->setCurrentThickness(this->getCurrentThickness() * WIDTH_LEVEL_UP_INCREMENT);
+            this->setCurrentThickness(this->getCurrentThickness() + WIDTH_LEVEL_UP_INCREMENT);
             break;
         case REVERSE_CONTROLS:
             tempKey = this->rightKey;
@@ -215,7 +266,7 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->leftKey = tempKey;
             break;
         case OPEN_WALLS:
-            std::cout << "OPEN WALLS" << std::endl;
+            this->openWalls = false;
             break;
         case INVISIBLE:
             std::cout << "INVISIBLE" << std::endl;
@@ -223,6 +274,15 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
         default:
             std::cout<<"Should not end up here when stopping LevelUp"<<std::endl;
             //exit(1);
+    }
+}
+
+void Snake::clearBoard() {
+    for (auto it = snakesInGame.begin(); it != snakesInGame.end(); it++){
+        (*it)->lines.clear();
+        if(!(*it)->crashed){
+            (*it)->startNewLine((*it)->getCurrentThickness());
+        }
     }
 }
 
@@ -257,13 +317,16 @@ void Snake::setupNextInvisible(){
 }
 
 void Snake::startNewLine(double thickness){
-    lines.push_back(Line(thickness,color));
-    lines.back().addPoint(pos);
+    lines.push_front(Line(thickness,color));
+    lines.front().addPoint(pos);
 }
 
-void Snake::setCurrentThickness(float thickness) {
-    this->startNewLine(thickness);
-    headCircle.setRadius(thickness);
-    headCircle.setOrigin(thickness,thickness);
+bool Snake::setCurrentThickness(float thickness) {
+    if (thickness > 0) {
+        this->startNewLine(thickness);
+        headCircle.setRadius(thickness);
+        headCircle.setOrigin(thickness, thickness);
+        return true;
+    }
+    return false;
 }
-

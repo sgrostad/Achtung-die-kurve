@@ -20,26 +20,45 @@ Line::Line(double const& _thickness, sf::Color const& _color) : thickness(_thick
 }
 
 void Line::addPoint(sf::Vector2f const& point){
-    line.push_back(point);
+    sf::Vector2f secondLast = line.front();
+    line.push_front(point);
+    sf::Vector2f last = line.front();
     if (line.size() > 1){
-        sf::Vector2f unitVec = line[line.size()-1]-line[line.size()-2];
+        sf::Vector2f unitVec = last-secondLast;
         unitVec = GetUnitVec(unitVec);
         sf::Vector2f u(unitVec.y, -unitVec.x);
-        // TODO: Check which order is correct
-        vertexArray.append( sf::Vertex(u*thickness+line[line.size()-2], color) );
-        vertexArray.append( sf::Vertex(-u*thickness+line[line.size()-2], color) );
-        vertexArray.append( sf::Vertex(u*thickness+line[line.size()-1], color) );
-        vertexArray.append( sf::Vertex(-u*thickness+line[line.size()-1], color) );
+        vertexArray.append( sf::Vertex(u*thickness+secondLast, color) );
+        vertexArray.append( sf::Vertex(-u*thickness+secondLast, color) );
+        vertexArray.append( sf::Vertex(u*thickness+last, color) );
+        vertexArray.append( sf::Vertex(-u*thickness+last, color) );
     }
 }
 
-bool Line::crashedWithThisLine(sf::Vector2f const &headPosition, const float &headThickness, int const &numNeckPointsToIgnore) const{
-    std::vector< sf::Vector2f > tempLine = line;
-    if(numNeckPointsToIgnore > line.size()){
-        return false;
+bool Line::crashedWithThisLine(sf::Vector2f const &headPosition, const float &headThickness, bool neckCheck) const{
+    std::list< sf::Vector2f > tempLine = line;
+    if (neckCheck){
+        float delta = 1.0;
+        for (auto it = tempLine.begin(); it != tempLine.end(); ){
+            float maxThickness = Max(headThickness, thickness);
+            if (Distance(*it, headPosition) < 2 * maxThickness + delta){
+                it = tempLine.erase(it);
+            }
+            else{
+                break;
+            }
+        }
     }
-    tempLine.resize(line.size() - numNeckPointsToIgnore);
     return CircleCrashedWithLine(headPosition, headThickness, tempLine, thickness);
+}
+
+bool Line::headContainsWholeLine(sf::Vector2f const &headPosition, const float &headThickness) const {
+    float delta = 1.0;
+    for (auto it = line.begin(); it != line.end(); it++){
+        if (Distance(*it, headPosition) > headThickness + thickness + delta){
+            return false;
+        }
+    }
+    return true;
 }
 
 void Line::clear(){
@@ -51,7 +70,7 @@ void Line::draw(sf::RenderWindow& window){
     sf::CircleShape endPoints(thickness);
     endPoints.setFillColor(color);
     endPoints.setOrigin(thickness, thickness);
-    endPoints.setPosition(*line.begin());
+    endPoints.setPosition(line.front());
     window.draw(endPoints);
     endPoints.setPosition(line.back());
     window.draw(endPoints);
