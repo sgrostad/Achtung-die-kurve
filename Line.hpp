@@ -15,7 +15,7 @@
 #include <list>
 #include <string>
 
-const int NORMAL_THICKNESS = 4;
+const int NORMAL_THICKNESS = 6;
 class Line{
 private:
     float thickness;

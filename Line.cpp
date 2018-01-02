@@ -54,8 +54,7 @@ bool Line::crashedWithThisLine(sf::Vector2f const &headPosition, const float &he
 bool Line::headContainsWholeLine(sf::Vector2f const &headPosition, const float &headThickness) const {
     float delta = 1.0;
     for (auto it = line.begin(); it != line.end(); it++){
-        float maxThickness = Max(headThickness, thickness);
-        if (Distance(*it, headPosition) > 5*maxThickness + delta){ //TODO find out why 5 is needed here
+        if (Distance(*it, headPosition) > headThickness + thickness + delta){
             return false;
         }
     }
@@ -76,21 +75,6 @@ void Line::draw(sf::RenderWindow& window){
     endPoints.setPosition(line.back());
     window.draw(endPoints);
     window.draw(vertexArray);
-}
-
-std::string Line::printLine() {
-    std::string s = "";
-    for (auto point : line){
-        s += "(";
-        s += static_cast<double>(point.x);
-        s += ",";
-        s += static_cast<double>(point.y);
-        s +=  "), ";
-    }
-    return s;
-}
-std::ostream& operator<< (std::ostream& out, const Line &rhs){
-    
 }
 
 

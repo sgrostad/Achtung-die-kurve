@@ -40,7 +40,7 @@ double Average(double val1, double val2){
 
 bool CircleCrashedWithLine(sf::Vector2f const &position, float const &circleRadius, std::list< sf::Vector2f > const &line, int const &lineThickness){
     for(auto it = line.begin(); it != line.end(); it++){
-        if(Distance(position, *it) <= circleRadius + lineThickness){
+        if( Distance(position, *it) <= circleRadius + lineThickness){
             return true;
         }
     }
