@@ -10,4 +10,5 @@ enum LevelUpType{SPEED_FAST, SPEED_SLOW, CLEAR_BOARD, FAT, THIN, REVERSE_CONTROL
 
 const float FPS = 60.0;
 const double PI = 3.14159265;
+const int STANDARD_TIME_LEVEL_UP = 6;
 #endif /* Enum_hpp */

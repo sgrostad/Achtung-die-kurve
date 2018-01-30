@@ -77,6 +77,7 @@ public:
 
     void updateInvisibleStatus();
     void setupNextInvisible();
+    void becomeInvisible();
     void startNewLine(double thickness);
 
     sf::Vector2f getLastPoint(){return lines.front().getLastPointOnLine();}

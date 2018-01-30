@@ -52,6 +52,9 @@ void Snake::update(double const& timeElapsed){
             this->checkWhetherAddingPoint();
             this->setCrashStatus();
         }
+        else{
+            this->checkForWallCrash();
+        }
     }
 }
 
@@ -146,7 +149,7 @@ bool Snake::checkForWallCrash(){
     float headThickness = this->getCurrentThickness();
     if(pos.x - headThickness < 0 || pos.x + headThickness > boardWidth ||
        pos.y - headThickness < 0 || pos.y + headThickness > boardHeight){
-        if(!openWalls){
+        if(!openWalls && !invisible){
             return true;
         } else {
             this->goThroughWall();
@@ -197,7 +200,7 @@ void Snake::addLevelUp(LevelUp const &levelUp) {
     }
 }
 
-bool Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
+bool Snake::startLevelUp(LevelUpType levelUpType) {
     sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
@@ -226,8 +229,8 @@ bool Snake::startLevelUp(LevelUpType levelUpType) { //TODO add all cases
             this->openWalls = true;
             break;
         case INVISIBLE:
-            std::cout << "INVISIBLE" << std::endl;
-            break;
+            this->becomeInvisible();
+            return false;
         default:
             std::cout<<"Should not end up here when starting LevelUp "<< levelUpType << std::endl;
             exit(1);
@@ -246,7 +249,7 @@ void Snake::removeLevelUps() {
     }
 }
 
-void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
+void Snake::stopLevelUp(LevelUpType levelUpType) {
     sf::Keyboard::Key tempKey;
     switch(levelUpType){
         case SPEED_FAST:
@@ -268,9 +271,6 @@ void Snake::stopLevelUp(LevelUpType levelUpType) { //TODO add all cases
             break;
         case OPEN_WALLS:
             this->openWalls = false;
-            break;
-        case INVISIBLE:
-            std::cout << "INVISIBLE" << std::endl;
             break;
         default:
             std::cout<<"Should not end up here when stopping LevelUp"<<std::endl;
@@ -317,7 +317,17 @@ void Snake::setupNextInvisible(){
     framesToNextInvisible = RandomInt(minFramesToInvisible, maxFramesToInvisible);
 }
 
+void Snake::becomeInvisible() {
+    invisibleTimer.restart();
+    invisible = true;
+    numFramesInvisible = STANDARD_TIME_LEVEL_UP * FPS;
+    framesToNextInvisible = 0;
+}
+
 void Snake::startNewLine(double thickness){
+    if (invisible){
+        return;
+    }
     lines.push_front(Line(thickness,color));
     lines.front().addPoint(pos);
 }
